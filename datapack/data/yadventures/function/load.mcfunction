@@ -2,6 +2,8 @@
 scoreboard objectives add yadventures.bonus_hp dummy
 scoreboard objectives add yadventures.bonus_hp_gained dummy
 scoreboard objectives add yadventures.campfire dummy
+scoreboard objectives add yadventures.left minecraft.custom:minecraft.leave_game
+scoreboard objectives add yadventures.deaths deathCount
 
 execute as @a run function yadventures:hearts/recompute
 
