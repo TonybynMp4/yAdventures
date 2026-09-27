@@ -1,0 +1,24 @@
+{
+  "criteria": {
+    "warden": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:warden"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "warden"
+    ]
+  ],
+  "rewards": {
+    "function": "yadventures:hearts/gained"
+  }
+}

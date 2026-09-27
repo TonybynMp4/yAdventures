@@ -1,0 +1,15 @@
+{
+  "criteria": {
+    "raid": {
+      "trigger": "minecraft:hero_of_the_village"
+    }
+  },
+  "requirements": [
+    [
+      "raid"
+    ]
+  ],
+  "rewards": {
+    "function": "yadventures:hearts/gained"
+  }
+}
