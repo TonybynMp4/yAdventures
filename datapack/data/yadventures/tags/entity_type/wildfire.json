@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "friendsandfoes:wildfire",
+      "required": false
+    },
+    {
+      "id": "nekomasfixed:wildfire",
+      "required": false
+    }
+  ]
+}

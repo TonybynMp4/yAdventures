@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "yadventures:compat/bosses_loaded",
+      "required": false
+    }
+  ]
+}

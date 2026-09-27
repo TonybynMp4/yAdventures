@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "illagerexp:invoker",
+      "required": false
+    },
+    {
+      "id": "illagerinvasion:invoker",
+      "required": false
+    }
+  ]
+}
