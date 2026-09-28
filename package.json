@@ -6,9 +6,9 @@
   "module": "src/index.ts",
   "private": true,
   "scripts": {
-    "dev:watch": "sand watch",
-    "dev:build": "sand build",
-    "setup": "bun i"
+    "build": "sand build",
+    "watch": "sand watch",
+    "typecheck": "tsc -p ."
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -20,5 +20,6 @@
   },
   "trustedDependencies": [
     "@parcel/watcher"
-  ]
+  ],
+  "packageManager": "bun@1.4.2"
 }
