@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun x tsc --noEmit -p .
+
+      - name: Version
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            echo "PACK_VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          else
+            echo "PACK_VERSION=dev-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build datapack
+        run: bun dev:build
+
+      - name: Zip datapack
+        working-directory: .sandstone/output/datapack
+        run: |
+          test -f pack.mcmeta
+          zip -r "$GITHUB_WORKSPACE/yAdventures-$PACK_VERSION.zip" .
+
+      # The artifact holds the pack's contents, so the downloaded zip is itself a working datapack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yAdventures-${{ env.PACK_VERSION }}
+          path: .sandstone/output/datapack/
+          if-no-files-found: error
+
+      - name: Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "yAdventures-$PACK_VERSION.zip" --title "yAdventures $GITHUB_REF_NAME" --generate-notes --verify-tag
+
+    permissions:
+      contents: write

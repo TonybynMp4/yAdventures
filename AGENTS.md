@@ -10,6 +10,8 @@ Written in TypeScript with [Sandstone](https://sandstone.dev) 1.2 (which targets
 - Commands must only be emitted inside an `MCFunction` body. Objective names get the
   namespace prefix (`Objective.create('compat')` is `yadventures.compat`); keep them
   stable, existing worlds rely on them.
+- CI (`.github/workflows/build.yml`) builds every push/PR and uploads the pack as an artifact.
+  Pushing a `v*` tag (e.g. `v1.0.0`) also creates a GitHub release with `yAdventures-<tag>.zip`.
 - Sandstone docs: https://sandstone.dev, and the typed API in `node_modules/sandstone/src`.
 
 ## Sources of information
