@@ -19,7 +19,7 @@ jobs:
     env:
       TAG: ${{ inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # full history and tags, for the commit list
       - uses: oven-sh/setup-bun@v2
@@ -31,11 +31,11 @@ jobs:
       - run: PACK_VERSION="$TAG" bun run build
 
       # Don't release a pack that fails to load
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 25
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: /tmp/yadv-ci/server.jar
           key: server-jar-33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c
