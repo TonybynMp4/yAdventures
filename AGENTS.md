@@ -4,14 +4,16 @@ Datapack for Minecraft Java 26.3, meant to be published (data pack format 121).
 Written in TypeScript with [Sandstone](https://sandstone.dev) 1.2 (which targets 26.3).
 
 - Source: `src/` (entry `src/index.ts`), config in `sandstone.config.ts`.
-- Build: `bun dev:build > /dev/null 2>&1`, output goes to `.sandstone/output/datapack/`
-  (log in `.sandstone/`). `bun dev:watch` rebuilds on change.
-- Typecheck: `bun x tsc --noEmit -p .`
+- Build: `bun run build > /dev/null 2>&1`, output goes to `.sandstone/output/datapack/`
+  (log in `.sandstone/`). `bun run watch` rebuilds on change.
+- Typecheck: `bun run typecheck`
+- Load test: `scripts/load-test.sh` boots a real 26.3 server with the built pack (needs Java 25).
 - Commands must only be emitted inside an `MCFunction` body. Objective names get the
   namespace prefix (`Objective.create('compat')` is `yadventures.compat`); keep them
   stable, existing worlds rely on them.
-- CI (`.github/workflows/build.yml`) builds every push/PR and uploads the pack as an artifact.
-  Pushing a `v*` tag (e.g. `v1.0.0`) also creates a GitHub release with `yAdventures-<tag>.zip`.
+- CI: `.github/workflows/build.yml` typechecks, builds and load-tests every push/PR, and uploads
+  the pack as an artifact. Pushing a `v*` tag (e.g. `v1.0.0`) runs `release.yml`, which publishes
+  `yAdventures-<tag>.zip` with `.github/release-notes.md` plus the commits since the last tag.
 - Sandstone docs: https://sandstone.dev, and the typed API in `node_modules/sandstone/src`.
 
 ## Sources of information

@@ -4,7 +4,7 @@ export default {
   name: 'yAdventures',
   packs: {
     datapack: {
-      // CI sets PACK_VERSION from the git tag
+      // CI sets PACK_VERSION (the release tag, or dev-<sha>)
       description: `yAdventures ${process.env.PACK_VERSION ?? 'dev'}`,
       packFormat: 121,
     },
