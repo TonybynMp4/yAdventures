@@ -1,0 +1,24 @@
+{
+  "name": "yadventures",
+  "version": "0.0.1",
+  "description": "Boss hearts and campfire rest for Minecraft 26.3",
+  "type": "module",
+  "module": "src/index.ts",
+  "private": true,
+  "scripts": {
+    "dev:watch": "sand watch",
+    "dev:build": "sand build",
+    "setup": "bun i"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "sandstone-cli": "^2.6.9",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "sandstone": "~1.2.36"
+  },
+  "trustedDependencies": [
+    "@parcel/watcher"
+  ]
+}

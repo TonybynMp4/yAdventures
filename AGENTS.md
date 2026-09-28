@@ -1,7 +1,16 @@
 # yAdventures
 
-Datapack (`datapack/`) for Minecraft Java 26.3, meant to be published
-(data pack format 121.0).
+Datapack for Minecraft Java 26.3, meant to be published (data pack format 121).
+Written in TypeScript with [Sandstone](https://sandstone.dev) 1.2 (which targets 26.3).
+
+- Source: `src/` (entry `src/index.ts`), config in `sandstone.config.ts`.
+- Build: `bun dev:build > /dev/null 2>&1`, output goes to `.sandstone/output/datapack/`
+  (log in `.sandstone/`). `bun dev:watch` rebuilds on change.
+- Typecheck: `bun x tsc --noEmit -p .`
+- Commands must only be emitted inside an `MCFunction` body. Objective names get the
+  namespace prefix (`Objective.create('compat')` is `yadventures.compat`); keep them
+  stable, existing worlds rely on them.
+- Sandstone docs: https://sandstone.dev, and the typed API in `node_modules/sandstone/src`.
 
 ## Sources of information
 
