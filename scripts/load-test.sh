@@ -37,8 +37,13 @@ done
 CHECKS=0
 check() { run "$1"; CHECKS=$((CHECKS + 1)); }
 if kill -0 $PID 2>/dev/null; then
-  run 'datapack list enabled' 'forceload add -16 -16 16 16'
-  sleep 3
+  # Chunks -1..0 on both axes; slow runners need more than a few seconds to load them
+  run 'datapack list enabled' 'forceload add -16 -16 15 15'
+  for _ in $(seq 60); do
+    run 'execute if loaded -16 0 -16 if loaded 15 0 15 if loaded -16 0 15 if loaded 15 0 -16 run say chunks loaded'
+    sleep 1
+    grep -q 'chunks loaded' log.txt && break
+  done
   # No optional boss source installed
   for source in wildfire iceologer illusioner invoker; do
     check "execute if score \$$source yadventures.compat matches 0"
