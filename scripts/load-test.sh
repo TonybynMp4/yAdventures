@@ -37,8 +37,13 @@ done
 CHECKS=0
 check() { run "$1"; CHECKS=$((CHECKS + 1)); }
 if kill -0 $PID 2>/dev/null; then
-  run 'datapack list enabled' 'forceload add 0 0'
-  sleep 3
+  # Chunks -1..0 on both axes; slow runners need more than a few seconds to load them
+  run 'datapack list enabled' 'forceload add -16 -16 15 15'
+  for _ in $(seq 60); do
+    run 'execute if loaded -16 0 -16 if loaded 15 0 15 if loaded -16 0 15 if loaded 15 0 -16 run say chunks loaded'
+    sleep 1
+    grep -q 'chunks loaded' log.txt && break
+  done
   # No optional boss source installed
   for source in wildfire iceologer illusioner invoker; do
     check "execute if score \$$source yadventures.compat matches 0"
@@ -52,12 +57,35 @@ if kill -0 $PID 2>/dev/null; then
   run 'execute as @e[tag=yadv.test] run function yadventures:hearts/recompute' \
     'execute store result score #hp yadventures.compat run attribute @e[tag=yadv.test,limit=1] minecraft:max_health get'
   check 'execute if score #hp yadventures.compat matches 20'
-  # Campfire scan: an unlit campfire doesn't count, a lit soul campfire 3 blocks away does
-  scan='execute positioned 8 64 8 store result score #scan yadventures.compat run function yadventures:campfire/scan'
-  run 'setblock 11 64 8 minecraft:campfire[lit=false]' 'scoreboard players set #scan yadventures.compat 0' "$scan"
-  check 'execute if score #scan yadventures.compat matches 0'
-  run 'setblock 11 64 8 minecraft:soul_campfire' "$scan"
-  check 'execute if score #scan yadventures.compat matches 1'
+  # Campfire: an unlit campfire doesn't count, a lit soul campfire 3 blocks away does and gets cached
+  as='execute as @e[tag=yadv.test] at @s'
+  nearby="$as store result score #near yadventures.compat run function yadventures:campfire/nearby"
+  rescan="$as run scoreboard players set @s yadventures.campfire_scan 0"
+  run 'setblock 11 64 8 minecraft:campfire[lit=false]' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 0'
+  run 'setblock 11 64 8 minecraft:soul_campfire' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 1'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_x matches 11'
+  # 6 blocks away: out of range, but still cached; a hay bale underneath makes it a signal fire
+  run 'tp @e[tag=yadv.test] 5 64 8' "$nearby"
+  check 'execute if score #near yadventures.compat matches 0'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_cached matches 1'
+  run 'setblock 11 63 8 minecraft:hay_block' "$nearby"
+  check 'execute if score #near yadventures.compat matches 1'
+  # Gone: dropped from the cache
+  run 'setblock 11 64 8 minecraft:air' "$nearby"
+  check 'execute if score #near yadventures.compat matches 0'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_cached matches 0'
+  # Scan past 4 blocks: a lit campfire 7 blocks away only counts on a hay bale
+  run 'setblock 12 63 8 minecraft:stone' 'setblock 12 64 8 minecraft:campfire' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 0'
+  run 'setblock 12 63 8 minecraft:hay_block' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 1'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_x matches 12'
+  # Negative coordinates: -7.5 is block -8, so the campfire 2 blocks west is at -10
+  run 'tp @e[tag=yadv.test] -7.5 64 -7.5' 'setblock -10 64 -8 minecraft:campfire' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 1'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_x matches -10'
   run 'kill @e[tag=yadv.test]' 'reload'
   sleep 3
   run stop
