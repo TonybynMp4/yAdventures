@@ -76,6 +76,12 @@ if kill -0 $PID 2>/dev/null; then
   run 'setblock 11 64 8 minecraft:air' "$nearby"
   check 'execute if score #near yadventures.compat matches 0'
   check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_cached matches 0'
+  # Scan past 4 blocks: a lit campfire 7 blocks away only counts on a hay bale
+  run 'setblock 12 63 8 minecraft:stone' 'setblock 12 64 8 minecraft:campfire' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 0'
+  run 'setblock 12 63 8 minecraft:hay_block' "$rescan" "$nearby"
+  check 'execute if score #near yadventures.compat matches 1'
+  check 'execute if score @e[tag=yadv.test,limit=1] yadventures.campfire_x matches 12'
   # Negative coordinates: -7.5 is block -8, so the campfire 2 blocks west is at -10
   run 'tp @e[tag=yadv.test] -7.5 64 -7.5' 'setblock -10 64 -8 minecraft:campfire' "$rescan" "$nearby"
   check 'execute if score #near yadventures.compat matches 1'
