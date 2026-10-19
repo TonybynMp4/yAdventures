@@ -12,8 +12,9 @@ Written in TypeScript with [Sandstone](https://sandstone.dev) 1.2 (which targets
   namespace prefix (`Objective.create('compat')` is `yadventures.compat`); keep them
   stable, existing worlds rely on them.
 - CI: `.github/workflows/build.yml` typechecks, builds and load-tests every push/PR, and uploads
-  the pack as an artifact. Pushing a `v*` tag (e.g. `v1.0.0`) runs `release.yml`, which publishes
-  `yAdventures-<tag>.zip` with `.github/release-notes.md` plus the commits since the last tag.
+  the pack as an artifact. `release.yml` (run by hand with a patch/minor/major bump, or on pushing a
+  semver tag like `1.2.0` or `v1.2.0`) reruns those jobs, then publishes `yAdventures-<tag>.zip`
+  with `.github/release-notes.md` plus the commits since the last version tag.
 - Sandstone docs: https://sandstone.dev, and the typed API in `node_modules/sandstone/src`.
 
 ## Sources of information
