@@ -41,11 +41,12 @@ jobs:
           if [ -n "$PUSHED" ]; then
             tag=$PUSHED
           else
-            IFS=. read -r major minor patch <<< "$(echo "${prev:-0.0.0}" | sed 's/^v//')"
+            v=${prev%%[0-9]*} # keep the latest tag's style, with or without a leading v
+            IFS=. read -r major minor patch <<< "${prev#v}"
             case $BUMP in
-              major) tag=$((major + 1)).0.0 ;;
-              minor) tag=$major.$((minor + 1)).0 ;;
-              patch) tag=$major.$minor.$((patch + 1)) ;;
+              major) tag=$v$((${major:-0} + 1)).0.0 ;;
+              minor) tag=$v${major:-0}.$((${minor:-0} + 1)).0 ;;
+              patch) tag=$v${major:-0}.${minor:-0}.$((${patch:-0} + 1)) ;;
             esac
             if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then echo "tag $tag already exists"; exit 1; fi
           fi
@@ -96,5 +97,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$TAG" dist/*.zip --target "$GITHUB_SHA" \
-            --title "yAdventures $TAG" \
-            --notes-file notes.md --generate-notes
+            --title "yAdventures $TAG" --notes-file notes.md
