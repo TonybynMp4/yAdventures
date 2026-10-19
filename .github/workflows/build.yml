@@ -16,7 +16,7 @@ jobs:
   typecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
@@ -26,14 +26,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
       - run: bun install --frozen-lockfile
       - run: PACK_VERSION="dev-${GITHUB_SHA::7}" bun run build
       # Downloads as a zip with pack.mcmeta at its root, ready to drop in
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: yAdventures-datapack
           path: .sandstone/output/datapack
@@ -44,16 +44,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           name: yAdventures-datapack
           path: datapack
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 25
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: /tmp/yadv-ci/server.jar
           key: server-jar-33680f5f2ac32864d6d7cf5e56a705fdb3e05f4c
@@ -61,7 +61,7 @@ jobs:
         env:
           PACK: ${{ github.workspace }}/datapack
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: server-log
           path: /tmp/yadv-ci/log.txt
