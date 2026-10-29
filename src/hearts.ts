@@ -1,4 +1,3 @@
-import type { Score } from 'sandstone'
 import { Advancement, Data, MCFunction, Selector, _, advancement, attribute, effect, execute, playsound, raw, title } from 'sandstone'
 import { bonusHp, bonusHpGained, deaths, left } from './objectives.ts'
 import { sources, iceologerMobs, illusionerMobs, invokerMobs, wildfireMobs } from './compat.ts'
@@ -8,16 +7,22 @@ const MODIFIER = 'yadventures:boss_hearts'
 
 type Predicate = Record<string, unknown>
 
+type Source = keyof typeof sources
+
 type Heart = {
   /** Advancement `yadventures:heart/<id>` */
   id: string
+  /** Shown in the Boss Hearts advancement tab */
+  title: string
+  goal: string
+  icon: string
   /** Any one of these grants the advancement */
   criteria: Record<string, unknown>
   hp: number
   /** Only counts while the source is installed (1) or missing (0) */
-  when?: [Score, 0 | 1]
+  when?: [Source, 0 | 1]
   /** Extra HP while the source is missing, covering its boss */
-  covers?: [Score, number]
+  covers?: [Source, number]
 }
 
 const killed = (predicate: Predicate) => ({
@@ -29,22 +34,47 @@ const killedTagged = (tag: string) => killed({ 'minecraft:entity_tags': { all_of
 
 // Totals 20 HP with any combination of optional sources installed
 const HEARTS: Heart[] = [
-  { id: 'wither', criteria: { wither: killedType('minecraft:wither') }, hp: 2, covers: [sources.wildfire, 2] },
+  {
+    id: 'wither',
+    title: 'Wither',
+    goal: 'Defeat the Wither',
+    icon: 'minecraft:nether_star',
+    criteria: { wither: killedType('minecraft:wither') },
+    hp: 2,
+    covers: ['wildfire', 2],
+  },
   {
     id: 'wildfire',
+    title: 'Wildfire',
+    goal: 'Defeat the Wildfire',
+    icon: 'minecraft:blaze_rod',
     criteria: { datapack: killedTagged('yadventures.boss.wildfire'), mod: killedType(`${wildfireMobs}`) },
     hp: 2,
-    when: [sources.wildfire, 1],
+    when: ['wildfire', 1],
   },
-  { id: 'creaking', criteria: { creaking: killedType('minecraft:creaking') }, hp: 1, covers: [sources.iceologer, 1] },
+  {
+    id: 'creaking',
+    title: 'Creaking',
+    goal: 'Defeat a Creaking',
+    icon: 'minecraft:creaking_heart',
+    criteria: { creaking: killedType('minecraft:creaking') },
+    hp: 1,
+    covers: ['iceologer', 1],
+  },
   {
     id: 'iceologer',
+    title: 'Iceologer',
+    goal: 'Defeat the Iceologer',
+    icon: 'minecraft:blue_ice',
     criteria: { datapack: killedTagged('yadventures.boss.iceologer'), mod: killedType(`${iceologerMobs}`) },
     hp: 1,
-    when: [sources.iceologer, 1],
+    when: ['iceologer', 1],
   },
   {
     id: 'bastion',
+    title: 'Bastion Treasure',
+    goal: 'Loot a bastion treasure chest',
+    icon: 'minecraft:gilded_blackstone',
     criteria: {
       bastion: {
         trigger: 'minecraft:player_generates_container_loot',
@@ -52,10 +82,13 @@ const HEARTS: Heart[] = [
       },
     },
     hp: 1,
-    covers: [sources.illusioner, 1],
+    covers: ['illusioner', 1],
   },
   {
     id: 'illusioner',
+    title: 'Illusioner',
+    goal: 'Defeat the Illusioner',
+    icon: 'minecraft:ender_eye',
     criteria: {
       vanilla: killed({
         'minecraft:entity_type': 'minecraft:illusioner',
@@ -65,11 +98,22 @@ const HEARTS: Heart[] = [
       mod: killed({ 'minecraft:entity_type': `${illusionerMobs}`, 'minecraft:nbt': '{IsIllusion:0b}' }),
     },
     hp: 1,
-    when: [sources.illusioner, 1],
+    when: ['illusioner', 1],
   },
-  { id: 'invoker', criteria: { invoker: killedType(`${invokerMobs}`) }, hp: 2, when: [sources.invoker, 1] },
+  {
+    id: 'invoker',
+    title: 'Invoker',
+    goal: 'Defeat the Invoker',
+    icon: 'minecraft:amethyst_cluster',
+    criteria: { invoker: killedType(`${invokerMobs}`) },
+    hp: 2,
+    when: ['invoker', 1],
+  },
   {
     id: 'mansion_evoker',
+    title: 'Mansion Evoker',
+    goal: 'Defeat an Evoker in a woodland mansion',
+    icon: 'minecraft:totem_of_undying',
     criteria: {
       mansion_evoker: killed({
         'minecraft:entity_type': 'minecraft:evoker',
@@ -77,13 +121,37 @@ const HEARTS: Heart[] = [
       }),
     },
     hp: 2,
-    when: [sources.invoker, 0],
+    when: ['invoker', 0],
   },
-  { id: 'ender_dragon', criteria: { ender_dragon: killedType('minecraft:ender_dragon') }, hp: 2 },
-  { id: 'elder_guardian', criteria: { elder_guardian: killedType('minecraft:elder_guardian') }, hp: 2 },
-  { id: 'warden', criteria: { warden: killedType('minecraft:warden') }, hp: 2 },
+  {
+    id: 'ender_dragon',
+    title: 'Ender Dragon',
+    goal: 'Defeat the Ender Dragon',
+    icon: 'minecraft:dragon_head',
+    criteria: { ender_dragon: killedType('minecraft:ender_dragon') },
+    hp: 2,
+  },
+  {
+    id: 'elder_guardian',
+    title: 'Elder Guardian',
+    goal: 'Defeat an Elder Guardian',
+    icon: 'minecraft:wet_sponge',
+    criteria: { elder_guardian: killedType('minecraft:elder_guardian') },
+    hp: 2,
+  },
+  {
+    id: 'warden',
+    title: 'Warden',
+    goal: 'Defeat a Warden',
+    icon: 'minecraft:echo_shard',
+    criteria: { warden: killedType('minecraft:warden') },
+    hp: 2,
+  },
   {
     id: 'ominous_vault',
+    title: 'Ominous Vault',
+    goal: 'Open an ominous vault',
+    icon: 'minecraft:ominous_trial_key',
     criteria: {
       ominous_vault: {
         trigger: 'minecraft:item_used_on_block',
@@ -103,11 +171,32 @@ const HEARTS: Heart[] = [
     },
     hp: 2,
   },
-  { id: 'raid', criteria: { raid: { trigger: 'minecraft:hero_of_the_village' } }, hp: 2 },
+  {
+    id: 'raid',
+    title: 'Hero of the Village',
+    goal: 'Win a raid',
+    icon: 'minecraft:bell',
+    criteria: { raid: { trigger: 'minecraft:hero_of_the_village' } },
+    hp: 2,
+  },
 ]
 
 const advancementId = (heart: Heart) => `yadventures:heart/${heart.id}`
 const hasHeart = (heart: Heart) => Selector('@s', { advancements: { [advancementId(heart)]: true } })
+
+// Boss Hearts advancement tab. Advancement files can't change once loaded, so hearts from optional
+// sources are hidden until earned. yAdventures-bosses overrides the Wildfire, Iceologer and
+// Illusioner hearts (and the hearts they cover) to show them, when it loads after this pack.
+const ROOT = 'yadventures:heart/root'
+const SOURCE_NAMES: Record<Source, string> = {
+  wildfire: 'a Wildfire',
+  iceologer: 'an Iceologer',
+  illusioner: 'an Illusioner',
+  invoker: 'an Invoker',
+}
+
+/** 1 HP is half a heart */
+const hearts = (hp: number) => `+${hp >= 2 ? Math.floor(hp / 2) : ''}${hp % 2 ? '½' : ''} ❤`
 
 const applyArgs = Data('storage', 'yadventures:hearts', 'apply')
 
@@ -121,11 +210,11 @@ export const recompute = MCFunction('hearts/recompute', () => {
   hp.set(0)
 
   for (const heart of HEARTS) {
-    const counts = heart.when ? execute.if.score(heart.when[0], 'matches', heart.when[1]) : execute
+    const counts = heart.when ? execute.if.score(sources[heart.when[0]], 'matches', heart.when[1]) : execute
     counts.if.entity(hasHeart(heart)).run(() => hp.add(heart.hp))
     if (heart.covers) {
       const [source, extra] = heart.covers
-      execute.if.score(source, 'matches', 0).if.entity(hasHeart(heart)).run(() => hp.add(extra))
+      execute.if.score(sources[source], 'matches', 0).if.entity(hasHeart(heart)).run(() => hp.add(extra))
     }
   }
 
@@ -160,8 +249,40 @@ const gained = MCFunction('hearts/gained', () => {
   _.if(gain.matches([1, null]), announce)
 })
 
+const display = (icon: string, title: string, description: unknown, extra: Record<string, unknown> = {}) => ({
+  icon: { id: icon },
+  title,
+  description,
+  frame: 'task',
+  show_toast: false,
+  announce_to_chat: false,
+  hidden: false,
+  ...extra,
+})
+
+Advancement('heart/root', {
+  display: display('minecraft:golden_apple', 'Boss Hearts', `Beat bosses for up to ${hearts(MAX_BONUS_HP)} max health`, {
+    background: 'minecraft:gui/advancements/backgrounds/adventure',
+  }),
+  criteria: { tick: { trigger: 'minecraft:tick' } },
+} as any)
+
 for (const heart of HEARTS) {
+  const description: unknown[] = [`${heart.goal}\n`, { text: hearts(heart.hp), color: 'red' }]
+  if (heart.covers) {
+    const [source, extra] = heart.covers
+    description.push({ text: ` (${hearts(heart.hp + extra)} without ${SOURCE_NAMES[source]})`, color: 'gray' })
+  }
+  if (heart.when?.[1] === 0) {
+    description.push({ text: ` (none with ${SOURCE_NAMES[heart.when[0]]})`, color: 'gray' })
+  }
   Advancement(`heart/${heart.id}`, {
+    parent: ROOT,
+    display: display(heart.icon, heart.title, description, {
+      frame: 'challenge',
+      announce_to_chat: true,
+      hidden: heart.when?.[1] === 1,
+    }),
     criteria: heart.criteria,
     requirements: [Object.keys(heart.criteria)],
     rewards: { function: gained },
