@@ -34,10 +34,15 @@ const killedTagged = (tag: string) => killed({ 'minecraft:entity_tags': { all_of
 
 // Totals 20 HP with any combination of optional sources installed
 const HEARTS: Heart[] = [
-  { id: 'wither',
+  {
+    id: 'wither',
     title: 'Wither',
     goal: 'Defeat the Wither',
-    icon: 'minecraft:nether_star', criteria: { wither: killedType('minecraft:wither') }, hp: 2, covers: ['wildfire', 2] },
+    icon: 'minecraft:nether_star',
+    criteria: { wither: killedType('minecraft:wither') },
+    hp: 2,
+    covers: ['wildfire', 2],
+  },
   {
     id: 'wildfire',
     title: 'Wildfire',
@@ -47,10 +52,15 @@ const HEARTS: Heart[] = [
     hp: 2,
     when: ['wildfire', 1],
   },
-  { id: 'creaking',
+  {
+    id: 'creaking',
     title: 'Creaking',
     goal: 'Defeat a Creaking',
-    icon: 'minecraft:creaking_heart', criteria: { creaking: killedType('minecraft:creaking') }, hp: 1, covers: ['iceologer', 1] },
+    icon: 'minecraft:creaking_heart',
+    criteria: { creaking: killedType('minecraft:creaking') },
+    hp: 1,
+    covers: ['iceologer', 1],
+  },
   {
     id: 'iceologer',
     title: 'Iceologer',
@@ -90,10 +100,15 @@ const HEARTS: Heart[] = [
     hp: 1,
     when: ['illusioner', 1],
   },
-  { id: 'invoker',
+  {
+    id: 'invoker',
     title: 'Invoker',
     goal: 'Defeat the Invoker',
-    icon: 'minecraft:amethyst_cluster', criteria: { invoker: killedType(`${invokerMobs}`) }, hp: 2, when: ['invoker', 1] },
+    icon: 'minecraft:amethyst_cluster',
+    criteria: { invoker: killedType(`${invokerMobs}`) },
+    hp: 2,
+    when: ['invoker', 1],
+  },
   {
     id: 'mansion_evoker',
     title: 'Mansion Evoker',
@@ -108,18 +123,30 @@ const HEARTS: Heart[] = [
     hp: 2,
     when: ['invoker', 0],
   },
-  { id: 'ender_dragon',
+  {
+    id: 'ender_dragon',
     title: 'Ender Dragon',
     goal: 'Defeat the Ender Dragon',
-    icon: 'minecraft:dragon_head', criteria: { ender_dragon: killedType('minecraft:ender_dragon') }, hp: 2 },
-  { id: 'elder_guardian',
+    icon: 'minecraft:dragon_head',
+    criteria: { ender_dragon: killedType('minecraft:ender_dragon') },
+    hp: 2,
+  },
+  {
+    id: 'elder_guardian',
     title: 'Elder Guardian',
     goal: 'Defeat an Elder Guardian',
-    icon: 'minecraft:wet_sponge', criteria: { elder_guardian: killedType('minecraft:elder_guardian') }, hp: 2 },
-  { id: 'warden',
+    icon: 'minecraft:wet_sponge',
+    criteria: { elder_guardian: killedType('minecraft:elder_guardian') },
+    hp: 2,
+  },
+  {
+    id: 'warden',
     title: 'Warden',
     goal: 'Defeat a Warden',
-    icon: 'minecraft:echo_shard', criteria: { warden: killedType('minecraft:warden') }, hp: 2 },
+    icon: 'minecraft:echo_shard',
+    criteria: { warden: killedType('minecraft:warden') },
+    hp: 2,
+  },
   {
     id: 'ominous_vault',
     title: 'Ominous Vault',
@@ -144,10 +171,14 @@ const HEARTS: Heart[] = [
     },
     hp: 2,
   },
-  { id: 'raid',
+  {
+    id: 'raid',
     title: 'Hero of the Village',
     goal: 'Win a raid',
-    icon: 'minecraft:bell', criteria: { raid: { trigger: 'minecraft:hero_of_the_village' } }, hp: 2 },
+    icon: 'minecraft:bell',
+    criteria: { raid: { trigger: 'minecraft:hero_of_the_village' } },
+    hp: 2,
+  },
 ]
 
 const advancementId = (heart: Heart) => `yadventures:heart/${heart.id}`
